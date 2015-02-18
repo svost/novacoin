@@ -20,7 +20,7 @@ extern void TxToJSON(const CTransaction& tx, const uint256 hashBlock, json_spiri
 std::string HelpRequiringPassphrase()
 {
     return pwalletMain->IsCrypted()
-        ? "\n\nRequires wallet passphrase to be set with walletpassphrase first"
+        ? "\nrequires wallet passphrase to be set with walletpassphrase first"
         : "";
 }
 
@@ -1410,9 +1410,7 @@ Value keypoolrefill(const Array& params, bool fHelp)
     if (fHelp || params.size() > 1)
         throw runtime_error(
             "keypoolrefill [new-size]\n"
-            "Fills the keypool.\n"
-            "IMPORTANT: Any previous backups you have made of your wallet file "
-            "should be replaced with the newly generated one."
+            "Fills the keypool."
             + HelpRequiringPassphrase());
 
     unsigned int nSize = max<unsigned int>(GetArg("-keypool", 100), 0);
@@ -1437,9 +1435,7 @@ Value keypoolreset(const Array& params, bool fHelp)
     if (fHelp || params.size() > 1)
         throw runtime_error(
             "keypoolreset [new-size]\n"
-            "Resets the keypool.\n"
-            "IMPORTANT: Any previous backups you have made of your wallet file "
-            "should be replaced with the newly generated one."
+            "Resets the keypool."
             + HelpRequiringPassphrase());
 
     unsigned int nSize = max<unsigned int>(GetArg("-keypool", 100), 0);

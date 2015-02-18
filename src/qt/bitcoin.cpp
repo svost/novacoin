@@ -224,6 +224,8 @@ int main(int argc, char *argv[])
                 // Put this in a block, so that the Model objects are cleaned up before
                 // calling Shutdown().
 
+                optionsModel.Upgrade(); // Must be done after AppInit2
+
                 if (splashref)
                     splash.finish(&window);
 
