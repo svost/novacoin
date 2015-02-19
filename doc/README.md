@@ -55,7 +55,7 @@ The Bitcoin repo's [root README](https://github.com/bitcoin/bitcoin/blob/master/
 
 ### Resources
 * Discuss on the [BitcoinTalk](https://bitcointalk.org/) forums, in the [Development & Technical Discussion board](https://bitcointalk.org/index.php?board=6.0).
-* Discuss on [#bitcoin-dev](http://webchat.freenode.net/?channels=bitcoin) on Freenode. If you don't have an IRC client use [webchat here](http://webchat.freenode.net/?channels=bitcoin-dev).
+* Additional info [at website](https://novaco.in/).
 
 ### Miscellaneous
 - [Files](files.md)
@@ -63,4 +63,4 @@ The Bitcoin repo's [root README](https://github.com/bitcoin/bitcoin/blob/master/
 
 License
 ---------------------
-See COPYNG in root folder.
+See COPYING in root folder.
