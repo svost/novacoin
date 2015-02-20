@@ -7,18 +7,17 @@ Setup
 
 Running
 ---------------------
-The following are some helpful notes on how to run Bitcoin on your native platform. 
+The following are some helpful notes on how to run Novacoin on your native platform. 
 
 ### Unix
 
-You need the Qt4 run-time libraries to run Bitcoin-Qt. On Debian or Ubuntu:
+You need the Qt4 run-time libraries to run Novacoin-Qt. On Debian or Ubuntu:
 
 	sudo apt-get install libqtgui4
 
 Unpack the files into a directory and run:
 
-- novacoin-qt (GUI, 32-bit) or novacoind (headless, 32-bit)
-- novacoin-qt (GUI, 64-bit) or novacoind (headless, 64-bit)
+- novacoin-qt (GUI) or novacoind (headless)
 
 
 
@@ -32,14 +31,14 @@ Drag Novacoin-Qt to your applications folder, and then run Novacoin-Qt.
 
 ### Need Help?
 
-* Ask for help on the [BitcoinTalk](https://bitcointalk.org/) forums, in the [Technical Support board](https://bitcointalk.org/index.php?board=4.0).
+* Ask for help on the [BitcoinTalk](https://bitcointalk.org/) forums, in the [English thread ](https://bitcointalk.org/index.php?topic=143221.0) or [Russian thread](https://bitcointalk.org/index.php?topic=704756.0).
 
 Building
 ---------------------
-The following are developer notes on how to build Bitcoin on your native platform. They are not complete guides, but include notes on the necessary libraries, compile flags, etc.
+The following are developer notes on how to build Novacoin on your native platform. They are not complete guides, but include notes on the necessary libraries, compile flags, etc.
 
-- [OSX Build Notes](build-osx.md)
-- [Unix Build Notes](build-unix.md)
+- [OSX Build Notes](build-osx.txt)
+- [Unix Build Notes](build-unix.txt)
 
 Development
 ---------------------
@@ -55,7 +54,7 @@ The Bitcoin repo's [root README](https://github.com/bitcoin/bitcoin/blob/master/
 
 ### Resources
 * Discuss on the [BitcoinTalk](https://bitcointalk.org/) forums, in the [Development & Technical Discussion board](https://bitcointalk.org/index.php?board=6.0).
-* Additional info [at website](https://novaco.in/).
+* Additional info is available [on website](https://novaco.in/).
 
 ### Miscellaneous
 - [Files](files.md)
