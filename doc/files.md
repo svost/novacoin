@@ -1,5 +1,11 @@
 Used in 0.5.x
 ---------------------
+
+### Executables
+* novacoin-qt (.exe) - GUI Novacoin core
+* novacoind (.exe) - console Novacoin core daemon
+
+### Data directory
 * wallet.dat: personal wallet (BDB) with keys and transactions
 * peers.dat: peer IP address database (custom format)
 * txleveldb/*: block chain index (LevelDB)
@@ -9,5 +15,3 @@ Used in 0.5.x
 * novacoin.conf: configuration file
 * debug.log: debugging messages of novacoin core
 * db.log: debugging messages of database
-
-
