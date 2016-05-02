@@ -3086,23 +3086,26 @@ std::string GetWarnings(std::string strFor)
 
 bool static AlreadyHave(CTxDB& txdb, const CInv& inv)
 {
-    switch (inv.type)
+    int nType = inv.GetType();
+    auto nHash = inv.GetHash();
+
+    switch (nType)
     {
     case MSG_TX:
         {
         bool txInMap = false;
             {
             LOCK(mempool.cs);
-            txInMap = (mempool.exists(inv.hash));
+            txInMap = (mempool.exists(nHash));
             }
         return txInMap ||
-               mapOrphanTransactions.count(inv.hash) ||
-               txdb.ContainsTx(inv.hash);
+               mapOrphanTransactions.count(nHash) ||
+               txdb.ContainsTx(nHash);
         }
 
     case MSG_BLOCK:
-        return mapBlockIndex.count(inv.hash) ||
-               mapOrphanBlocks.count(inv.hash);
+        return mapBlockIndex.count(nHash) ||
+               mapOrphanBlocks.count(nHash);
     }
     // Don't know what it is, just say we already got one
     return true;
@@ -3350,10 +3353,10 @@ bool static ProcessMessage(CNode* pfrom, std::string strCommand, CDataStream& vR
         }
 
         // find last block in inv vector
-        size_t nLastBlock = std::numeric_limits<size_t>::max();
+        int nLastBlock = -1;
         for (size_t nInv = 0; nInv < vInv.size(); nInv++) {
-            if (vInv[vInv.size() - 1 - nInv].type == MSG_BLOCK) {
-                nLastBlock = vInv.size() - 1 - nInv;
+            if (vInv[vInv.size() - 1 - nInv].GetType() == MSG_BLOCK) {
+                nLastBlock = (int) (vInv.size() - 1 - nInv);
                 break;
             }
         }
@@ -3361,6 +3364,8 @@ bool static ProcessMessage(CNode* pfrom, std::string strCommand, CDataStream& vR
         for (size_t nInv = 0; nInv < vInv.size(); nInv++)
         {
             const CInv &inv = vInv[nInv];
+            int nType = inv.GetType();
+            auto nHash = inv.GetHash();
 
             if (fShutdown)
                 return true;
@@ -3372,19 +3377,19 @@ bool static ProcessMessage(CNode* pfrom, std::string strCommand, CDataStream& vR
 
             if (!fAlreadyHave)
                 pfrom->AskFor(inv);
-            else if (inv.type == MSG_BLOCK && mapOrphanBlocks.count(inv.hash)) {
-                pfrom->PushGetBlocks(pindexBest, GetOrphanRoot(mapOrphanBlocks[inv.hash]));
-            } else if (nInv == nLastBlock) {
+            else if (nType == MSG_BLOCK && mapOrphanBlocks.count(nHash)) {
+                pfrom->PushGetBlocks(pindexBest, GetOrphanRoot(mapOrphanBlocks[nHash]));
+            } else if (nType == nLastBlock) {
                 // In case we are on a very long side-chain, it is possible that we already have
                 // the last block in an inv bundle sent in response to getblocks. Try to detect
                 // this situation and push another getblocks to continue.
-                pfrom->PushGetBlocks(mapBlockIndex[inv.hash], uint256(0));
+                pfrom->PushGetBlocks(mapBlockIndex[nHash], uint256(0));
                 if (fDebug)
                     printf("force request: %s\n", inv.ToString().c_str());
             }
 
             // Track requests for our stuff
-            Inventory(inv.hash);
+            Inventory(nHash);
         }
     }
 
@@ -3409,10 +3414,13 @@ bool static ProcessMessage(CNode* pfrom, std::string strCommand, CDataStream& vR
             if (fDebugNet || (vInv.size() == 1))
                 printf("received getdata for: %s\n", inv.ToString().c_str());
 
-            if (inv.type == MSG_BLOCK)
+            int nType = inv.GetType();
+            auto nHash = inv.GetHash();
+
+            if (nType == MSG_BLOCK)
             {
                 // Send block from disk
-                auto mi = mapBlockIndex.find(inv.hash);
+                auto mi = mapBlockIndex.find(nHash);
                 if (mi != mapBlockIndex.end())
                 {
                     CBlock block;
@@ -3420,7 +3428,7 @@ bool static ProcessMessage(CNode* pfrom, std::string strCommand, CDataStream& vR
                     pfrom->PushMessage("block", block);
 
                     // Trigger them to send a getblocks request for the next batch of inventory
-                    if (inv.hash == pfrom->hashContinue)
+                    if (nHash == pfrom->hashContinue)
                     {
                         // ppcoin: send latest proof-of-work block to allow the
                         // download node to accept as orphan (proof-of-stake 
@@ -3444,10 +3452,10 @@ bool static ProcessMessage(CNode* pfrom, std::string strCommand, CDataStream& vR
                         pushed = true;
                     }
                 }
-                if (!pushed && inv.type == MSG_TX) {
+                if (!pushed && nType == MSG_TX) {
                     LOCK(mempool.cs);
-                    if (mempool.exists(inv.hash)) {
-                        CTransaction tx = mempool.lookup(inv.hash);
+                    if (mempool.exists(nHash)) {
+                        CTransaction tx = mempool.lookup(nHash);
                         CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
                         ss.reserve(1000);
                         ss << tx;
@@ -3457,7 +3465,7 @@ bool static ProcessMessage(CNode* pfrom, std::string strCommand, CDataStream& vR
             }
 
             // Track requests for our stuff
-            Inventory(inv.hash);
+            Inventory(nHash);
         }
     }
 
@@ -3564,11 +3572,13 @@ bool static ProcessMessage(CNode* pfrom, std::string strCommand, CDataStream& vR
         bool fMissingInputs = false;
         if (tx.AcceptToMemoryPool(txdb, true, &fMissingInputs))
         {
+            auto nHash = inv.GetHash();
+
             SyncWithWallets(tx, NULL, true);
-            RelayTransaction(tx, inv.hash);
+            RelayTransaction(tx, nHash);
             mapAlreadyAskedFor.erase(inv);
-            vWorkQueue.push_back(inv.hash);
-            vEraseQueue.push_back(inv.hash);
+            vWorkQueue.push_back(nHash);
+            vEraseQueue.push_back(nHash);
 
             // Recursively process any orphan transactions that depended on this one
             for (unsigned int i = 0; i < vWorkQueue.size(); i++)
@@ -3934,14 +3944,14 @@ bool SendMessages(CNode* pto)
                     continue;
 
                 // trickle out tx inv to protect privacy
-                if (inv.type == MSG_TX && !fSendTrickle)
+                if (inv.GetType() == MSG_TX && !fSendTrickle)
                 {
                     // 1/4 of tx invs blast to all immediately
                     static uint256 hashSalt;
                     if (hashSalt == 0)
                         hashSalt = GetRandHash();
-                    uint256 hashRand = inv.hash ^ hashSalt;
-                    hashRand = Hash(BEGIN(hashRand), END(hashRand));
+                    uint256 hashRand = inv.GetHash() ^ hashSalt;
+                    hashRand = Hash(hashRand.begin(), hashRand.end());
                     bool fTrickleWait = ((hashRand & 3) != 0);
 
                     if (fTrickleWait)
