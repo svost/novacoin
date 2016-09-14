@@ -868,11 +868,22 @@ void ThreadSocketHandler2(void* parg)
                         pnode->CloseSocketDisconnect();
                     }
                     else {
+                         int optval = 0;
+                         unsigned int optlen = sizeof(optval);
+                         int result = getsockopt(pnode->hSocket, SOL_SOCKET, SO_RCVBUF, (char *)&optval, &optlen);
+                         if (result == SOCKET_ERROR)
+                         {
+                         //getsockopt failed
+                         optval = 0x10000;
+                         printf("socket recv buffer size after error %d\n", optval); // tmp debug output
+                         }
+                         printf("socket recv buffer size %d\n", optval); // tmp debug output
                         // typical socket buffer is 8K-64K
-                        char pchBuf[0x10000];
-                        int nBytes = recv(pnode->hSocket, pchBuf, sizeof(pchBuf), MSG_DONTWAIT);
+                        vector<char>* vchBuf = new vector <char>(optval, 0);
+                        int nBytes = recv(pnode->hSocket, &vchBuf->operator[](0), vchBuf->size(), MSG_DONTWAIT);
                         if (nBytes > 0)
                         {
+                            printf("nBytes %d\n", nBytes); // tmp debug output
                             vRecv.resize(nPos + nBytes);
                             memcpy(&vRecv[nPos], pchBuf, nBytes);
                             pnode->nLastRecv = GetTime();
@@ -897,6 +908,7 @@ void ThreadSocketHandler2(void* parg)
                                 pnode->CloseSocketDisconnect();
                             }
                         }
+                        delete vchBuf;
                     }
                 }
             }
