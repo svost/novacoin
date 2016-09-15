@@ -19,8 +19,6 @@
 #ifndef Q_MOC_RUN
 #include <boost/thread.hpp>
 #include <boost/filesystem/path.hpp>
-#include <boost/date_time/gregorian/gregorian_types.hpp>
-#include <boost/date_time/posix_time/posix_time_types.hpp>
 #endif
 
 #if defined(__USE_MINGW_ANSI_STDIO)
@@ -342,14 +340,12 @@ inline void PrintHex(const std::vector<unsigned char>& vch, const char* pszForma
 
 inline int64_t GetTimeMillis()
 {
-    return (boost::posix_time::microsec_clock::universal_time() -
-            boost::posix_time::ptime(boost::gregorian::date(1970,1,1))).total_milliseconds();
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
 inline int64_t GetTimeMicros()
 {
-    return (boost::posix_time::microsec_clock::universal_time() -
-                   boost::posix_time::ptime(boost::gregorian::date(1970,1,1))).total_microseconds();
+    return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
 std::string DateTimeStrFormat(const char* pszFormat, int64_t nTime);
