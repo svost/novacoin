@@ -116,6 +116,7 @@ OBJS= \
     obj/irc.o \
     obj/keystore.o \
     obj/miner.o \
+    obj/transaction.o \
     obj/main.o \
     obj/net.o \
     obj/ntp.o \

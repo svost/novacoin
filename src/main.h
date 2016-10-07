@@ -7,6 +7,7 @@
 
 #include <algorithm>
 
+#include "transaction.h"
 #include "timestamps.h"
 #include "bignum.h"
 #include "sync.h"
@@ -197,46 +198,6 @@ public:
     bool IsNull() const { return (ptx == NULL && n == std::numeric_limits<uint32_t>::max()); }
 };
 
-
-
-// An outpoint - a combination of a transaction hash and an index n into its vout
-class COutPoint
-{
-public:
-    uint256 hash;
-    uint32_t n;
-
-    COutPoint() { SetNull(); }
-    COutPoint(uint256 hashIn, uint32_t nIn) : hash(hashIn), n(nIn) {}
-    IMPLEMENT_SERIALIZE( READWRITE(FLATDATA(*this)); )
-    void SetNull() { hash = 0; n = std::numeric_limits<uint32_t>::max(); }
-    bool IsNull() const { return (hash == 0 && n == std::numeric_limits<uint32_t>::max()); }
-
-    friend bool operator<(const COutPoint& a, const COutPoint& b)
-    {
-        return (a.hash < b.hash || (a.hash == b.hash && a.n < b.n));
-    }
-
-    friend bool operator==(const COutPoint& a, const COutPoint& b)
-    {
-        return (a.hash == b.hash && a.n == b.n);
-    }
-
-    friend bool operator!=(const COutPoint& a, const COutPoint& b)
-    {
-        return !(a == b);
-    }
-
-    std::string ToString() const
-    {
-        return strprintf("COutPoint(%s, %" PRIu32 ")", hash.ToString().substr(0,10).c_str(), n);
-    }
-
-    void print() const
-    {
-        printf("%s\n", ToString().c_str());
-    }
-};
 
 
 
