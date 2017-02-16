@@ -7,8 +7,6 @@ USE_ASM:=1
 CC=$(CROSS)gcc
 CXX=$(CROSS)g++
 
-USE_IPV6:=1
-
 BOOST_SUFFIX?=-mt
 BOOST_THREAD_LIB_SUFFIX?=_win32-mt
 
@@ -82,6 +80,7 @@ OBJS= \
     obj/serialize.o \
     obj/uint256.o \
     obj/ipcollector.o \
+    obj/timedata.o \
     obj/kernel_worker.o
 
 all: novacoind.exe
