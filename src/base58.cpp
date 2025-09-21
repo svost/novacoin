@@ -14,6 +14,8 @@
 //
 
 #include "base58.h"
+#include "keystore.h"
+#include "script.h"
 #include "hash.h"
 
 static const std::array<char, 58> digits = {
@@ -367,6 +369,17 @@ bool DecodeBase58Check(const std::string& str, std::vector<unsigned char>& vchRe
         else
             return fSeemsSane;
     }
+
+    CBitcoinAddress::CBitcoinAddress(const CTxDestination &dest)
+    {
+        Set(dest);
+    }
+
+    CBitcoinAddress::CBitcoinAddress(const CMalleablePubKey &mpk)
+    {
+        Set(mpk);
+    }
+
 
     CTxDestination CBitcoinAddress::Get() const {
         if (!IsValid())

@@ -4,6 +4,7 @@
 
 #include "key.h"
 #include "base58.h"
+#include "bignum.h"
 #include "streams.h"
 #include "hash.h"
 

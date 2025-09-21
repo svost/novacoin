@@ -7,6 +7,7 @@
 #include "interface.h"
 #include "base58.h"
 #include "wallet.h"
+#include "walletdb.h"
 
 #define printf OutputDebugStringF
 

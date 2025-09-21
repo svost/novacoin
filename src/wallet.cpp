@@ -6,6 +6,7 @@
 #include "wallet.h"
 #include "txdb-leveldb.h"
 #include "base58.h"
+#include "bignum.h"
 #include "coincontrol.h"
 #include "crypter.h"
 #include "kernel.h"

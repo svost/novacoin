@@ -6,13 +6,21 @@
 #define BITCOIN_WALLETDB_H
 
 #include "db.h"
+#include "allocators.h"
 
-class CKeyPool;
 class CAccount;
 class CAccountingEntry;
+class CKeyPool;
+class CMalleableKeyView;
+class CPubKey;
+class uint160;
+class uint256;
+
+typedef std::vector<unsigned char, secure_allocator<unsigned char> > CPrivKey;
+typedef std::vector<unsigned char, secure_allocator<unsigned char> > CSecret;
 
 /** Error statuses for the wallet database */
-enum DBErrors
+enum DBErrors : int
 {
     DB_LOAD_OK,
     DB_CORRUPT,

@@ -5,9 +5,9 @@
 #ifndef BITCOIN_WALLET_H
 #define BITCOIN_WALLET_H
 
+#include "keystore.h"
 #include "main.h"
 #include "interface.h"
-#include "walletdb.h"
 
 extern unsigned int nStakeMaxAge;
 extern bool fWalletUnlockMintOnly;
@@ -17,6 +17,9 @@ class CWalletTx;
 class CReserveKey;
 class COutput;
 class CCoinControl;
+class CKeyMetadata;
+class CWalletDB;
+enum DBErrors : int;
 
 // Set of selected transactions
 typedef std::set<std::pair<const CWalletTx*,unsigned int> > CoinsSet;

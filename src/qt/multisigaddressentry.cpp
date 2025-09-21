@@ -8,8 +8,11 @@
 #include "base58.h"
 #include "guiutil.h"
 #include "key.h"
+#include "keystore.h"
 #include "multisigaddressentry.h"
+#include "script.h"
 #include "ui_multisigaddressentry.h"
+#include "util.h"
 #include "walletmodel.h"
 
 

@@ -4,6 +4,7 @@
 // file license.txt or http://www.opensource.org/licenses/mit-license.php.
 
 #include "txdb-leveldb.h"
+#include "bignum.h"
 #include "kernel.h"
 #include "checkpoints.h"
 #include "main.h"

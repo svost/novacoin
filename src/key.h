@@ -11,11 +11,11 @@
 #include "allocators.h"
 #include "serialize.h"
 #include "uint256.h"
-#include "bignum.h"
 
 #include <openssl/ec.h> // for EC_KEY definition
 #include <openssl/obj_mac.h>
 
+class CBigNum;
 
 // secp160k1
 // const unsigned int PRIVATE_KEY_SIZE = 192;

@@ -5,6 +5,7 @@
 
 #include "main.h"
 #include "alert.h"
+#include "bignum.h"
 #include "checkpoints.h"
 #include "db.h"
 #include "txdb-leveldb.h"

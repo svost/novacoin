@@ -15,13 +15,20 @@
 #ifndef BITCOIN_BASE58_H
 #define BITCOIN_BASE58_H
 
-#include "key.h"
-#include "script.h"
+#include "allocators.h"
 
 #include <openssl/crypto.h> // for OPENSSL_cleanse()
 
 #include <string>
 #include <vector>
+#include <variant>
+
+class CKeyID;
+class CMalleablePubKey;
+class CNoDestination;
+class CScriptID;
+typedef std::vector<unsigned char, secure_allocator<unsigned char> > CSecret;
+using CTxDestination = std::variant<CNoDestination, CKeyID, CScriptID>;
 
 // Encode a byte sequence as a base58-encoded string
 std::string EncodeBase58(const unsigned char* pbegin, const unsigned char* pend);
@@ -106,8 +113,8 @@ public:
     bool IsValid() const;
 
     CBitcoinAddress() {}
-    CBitcoinAddress(const CTxDestination &dest) { Set(dest); }
-    CBitcoinAddress(const CMalleablePubKey &mpk) { Set(mpk); }
+    CBitcoinAddress(const CTxDestination &dest);
+    CBitcoinAddress(const CMalleablePubKey &mpk);
     CBitcoinAddress(const std::string& strAddress) { SetString(strAddress); }
     CBitcoinAddress(const char* pszAddress) { SetString(pszAddress); }
 

@@ -5,8 +5,6 @@
 #ifndef H_BITCOIN_SCRIPT
 #define H_BITCOIN_SCRIPT
 
-#include "keystore.h"
-#include "bignum.h"
 #include "util.h"
 
 #include <string>
@@ -15,8 +13,18 @@
 
 typedef std::vector<uint8_t> valtype;
 
+class CBigNum;
 class CTransaction;
 class CBitcoinAddress;
+class CKeyID;
+class CKeyStore;
+class CNoDestination;
+class CPubKey;
+class CScriptID;
+class uint160;
+class uint256;
+
+using CTxDestination = std::variant<CNoDestination, CKeyID, CScriptID>;
 
 static const unsigned int MAX_SCRIPT_ELEMENT_SIZE = 520; // bytes
 
@@ -257,13 +265,7 @@ enum opcodetype
 
 const char* GetOpName(opcodetype opcode);
 
-inline std::string ValueString(const std::vector<unsigned char>& vch)
-{
-    if (vch.size() <= 4)
-        return strprintf("%d", CBigNum(vch).getint32());
-    else
-        return HexStr(vch);
-}
+std::string ValueString(const std::vector<unsigned char>& vch);
 
 inline std::string StackString(const std::vector<std::vector<unsigned char> >& vStack)
 {
@@ -281,33 +283,8 @@ inline std::string StackString(const std::vector<std::vector<unsigned char> >& v
 class CScript : public std::vector<uint8_t>
 {
 protected:
-    CScript& push_int64(int64_t n)
-    {
-        if (n == -1 || (n >= 1 && n <= 16))
-        {
-            push_back((uint8_t)n + (OP_1 - 1));
-        }
-        else
-        {
-            CBigNum bn(n);
-            *this << bn.getvch();
-        }
-        return *this;
-    }
-
-    CScript& push_uint64(uint64_t n)
-    {
-        if (n >= 1 && n <= 16)
-        {
-            push_back((uint8_t)n + (OP_1 - 1));
-        }
-        else
-        {
-            CBigNum bn(n);
-            *this << bn.getvch();
-        }
-        return *this;
-    }
+    CScript& push_int64(int64_t n);
+    CScript& push_uint64(uint64_t n);
 
 public:
     CScript() { }
@@ -343,8 +320,8 @@ public:
     explicit CScript(uint64_t b) { operator<<(b); }
 
     explicit CScript(opcodetype b)     { operator<<(b); }
-    explicit CScript(const uint256& b) { operator<<(b); }
-    explicit CScript(const CBigNum& b) { operator<<(b); }
+    explicit CScript(const uint256& b);
+    explicit CScript(const CBigNum& b);
     explicit CScript(const std::vector<uint8_t>& b) { operator<<(b); }
 
     CScript& operator<<(int8_t  b) { return push_int64(b); }
@@ -365,31 +342,10 @@ public:
         return *this;
     }
 
-    CScript& operator<<(const uint160& b)
-    {
-        insert(end(), sizeof(b));
-        insert(end(), (uint8_t*)&b, (uint8_t*)&b + sizeof(b));
-        return *this;
-    }
-
-    CScript& operator<<(const uint256& b)
-    {
-        insert(end(), sizeof(b));
-        insert(end(), (uint8_t*)&b, (uint8_t*)&b + sizeof(b));
-        return *this;
-    }
-
-    CScript& operator<<(const CPubKey& key)
-    {
-        std::vector<uint8_t> vchKey(key.begin(), key.end());
-        return (*this) << vchKey;
-    }
-
-    CScript& operator<<(const CBigNum& b)
-    {
-        *this << b.getvch();
-        return *this;
-    }
+    CScript& operator<<(const uint160& b);
+    CScript& operator<<(const uint256& b);
+    CScript& operator<<(const CPubKey& key);
+    CScript& operator<<(const CBigNum& b);
 
     CScript& operator<<(const std::vector<uint8_t>& b)
     {

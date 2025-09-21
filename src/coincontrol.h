@@ -4,6 +4,7 @@
 #include "base58.h"
 
 class COutPoint;
+class uint256;
 
 /** Coin Control Features. */
 class CCoinControl

@@ -4,6 +4,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "script.h"
+#include "bignum.h"
 #include "keystore.h"
 #include "key.h"
 #include "main.h"
@@ -248,6 +249,14 @@ const char* GetOpName(opcodetype opcode)
     default:
         return "OP_UNKNOWN";
     }
+}
+
+std::string ValueString(const std::vector<unsigned char> &vch)
+{
+    if (vch.size() <= 4)
+        return strprintf("%d", CBigNum(vch).getint32());
+    else
+        return HexStr(vch);
 }
 
 bool IsCanonicalPubKey(const valtype &vchPubKey, unsigned int flags) {
@@ -2049,6 +2058,70 @@ CScript CombineSignatures(const CScript& scriptPubKey, const CTransaction& txTo,
     EvalScript(stack2, scriptSig2, CTransaction(), 0, SCRIPT_VERIFY_STRICTENC, 0);
 
     return CombineSignatures(scriptPubKey, txTo, nIn, txType, vSolutions, stack1, stack2);
+}
+
+CScript &CScript::push_int64(int64_t n)
+{
+    if (n == -1 || (n >= 1 && n <= 16))
+    {
+        push_back((uint8_t)n + (OP_1 - 1));
+    }
+    else
+    {
+        CBigNum bn(n);
+        *this << bn.getvch();
+    }
+    return *this;
+}
+
+CScript &CScript::push_uint64(uint64_t n)
+{
+    if (n >= 1 && n <= 16)
+    {
+        push_back((uint8_t)n + (OP_1 - 1));
+    }
+    else
+    {
+        CBigNum bn(n);
+        *this << bn.getvch();
+    }
+    return *this;
+}
+
+CScript::CScript(const uint256 &b)
+{
+    operator<<(b);
+}
+
+CScript::CScript(const CBigNum &b)
+{
+    operator<<(b);
+}
+
+CScript &CScript::operator<<(const uint160 &b)
+{
+    insert(end(), sizeof(b));
+    insert(end(), (uint8_t*)&b, (uint8_t*)&b + sizeof(b));
+    return *this;
+}
+
+CScript &CScript::operator<<(const uint256 &b)
+{
+    insert(end(), sizeof(b));
+    insert(end(), (uint8_t*)&b, (uint8_t*)&b + sizeof(b));
+    return *this;
+}
+
+CScript &CScript::operator<<(const CPubKey &key)
+{
+    std::vector<uint8_t> vchKey(key.begin(), key.end());
+    return (*this) << vchKey;
+}
+
+CScript &CScript::operator<<(const CBigNum &b)
+{
+    *this << b.getvch();
+    return *this;
 }
 
 unsigned int CScript::GetSigOpCount(bool fAccurate) const
