@@ -10,6 +10,8 @@
 #include "sync.h"
 #include "version.h"
 
+#include <openssl/crypto.h>
+
 #include <boost/program_options/detail/config_file.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>

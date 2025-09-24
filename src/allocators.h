@@ -5,7 +5,7 @@
 #ifndef BITCOIN_ALLOCATORS_H
 #define BITCOIN_ALLOCATORS_H
 
-#include <openssl/crypto.h> // for OPENSSL_cleanse()
+#include "cleanse.h"
 
 #include <cstring>
 #include <string>
@@ -194,7 +194,7 @@ struct secure_allocator : public std::allocator<T>
     {
         if (p != nullptr)
         {
-            OPENSSL_cleanse(p, sizeof(T) * n);
+            memory_cleanse(p, sizeof(T) * n);
             LockedPageManager::Instance().UnlockRange(p, sizeof(T) * n);
         }
         std::allocator<T>::deallocate(p, n);
@@ -228,7 +228,7 @@ struct zero_after_free_allocator : public std::allocator<T>
     void deallocate(T* p, std::size_t n)
     {
         if (p != nullptr)
-            OPENSSL_cleanse(p, sizeof(T) * n);
+            memory_cleanse(p, sizeof(T) * n);
         std::allocator<T>::deallocate(p, n);
     }
 };

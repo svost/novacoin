@@ -14,6 +14,7 @@
 //
 
 #include "base58.h"
+#include "cleanse.h"
 #include "keystore.h"
 #include "script.h"
 #include "hash.h"
@@ -214,7 +215,7 @@ bool DecodeBase58Check(const std::string& str, std::vector<unsigned char>& vchRe
     {
         // zero the memory, as it may contain sensitive data
         if (!vchData.empty())
-            OPENSSL_cleanse(&vchData[0], vchData.size());
+            memory_cleanse(&vchData[0], vchData.size());
     }
 
     void CBase58Data::SetData(int nVersionIn, const void* pdata, size_t nSize)
@@ -249,7 +250,7 @@ bool DecodeBase58Check(const std::string& str, std::vector<unsigned char>& vchRe
         vchData.resize(vchTemp.size() - 1);
         if (!vchData.empty())
             memcpy(&vchData[0], &vchTemp[1], vchData.size());
-        OPENSSL_cleanse(&vchTemp[0], vchData.size());
+        memory_cleanse(&vchTemp[0], vchData.size());
         return true;
     }
 

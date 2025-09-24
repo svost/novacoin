@@ -17,8 +17,6 @@
 
 #include "allocators.h"
 
-#include <openssl/crypto.h> // for OPENSSL_cleanse()
-
 #include <string>
 #include <vector>
 #include <variant>
