@@ -8,6 +8,7 @@
 #include "streams.h"
 #include "hash.h"
 
+#include <openssl/ec.h>
 #include <openssl/ecdsa.h>
 #include <openssl/evp.h>
 
@@ -527,7 +528,19 @@ uint256 CPubKey::GetHash() const
     return Hash(vbytes, vbytes + size());
 }
 
-bool CPubKey::Verify(const uint256 &hash, const std::vector<unsigned char>& vchSig) const
+bool CPubKey::IsFullyValid() const
+{
+    const unsigned char* pbegin = &vbytes[0];
+    EC_KEY *pkey = EC_KEY_new_by_curve_name(NID_secp256k1);
+    if (o2i_ECPublicKey(&pkey, &pbegin, size()))
+    {
+        EC_KEY_free(pkey);
+        return true;
+    }
+    return false;
+}
+
+bool CPubKey::Verify(const uint256 &hash, const std::vector<unsigned char> &vchSig) const
 {
     if (vchSig.empty() || !IsValid())
         return false;
@@ -681,6 +694,11 @@ bool CPoint::ECMULGEN(const CBigNum &bnMultiplier, const CPoint &qPoint)
     if (!ok) printf("CPoint::ECMULGEN() : EC_POINT_mul failed.");
     BN_free(bnMul);
     return ok;
+}
+
+bool CPoint::IsInfinity()
+{
+    return EC_POINT_is_at_infinity(group, point) != 0;
 }
 
 // CMalleablePubKey

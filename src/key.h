@@ -12,10 +12,16 @@
 #include "serialize.h"
 #include "uint256.h"
 
-#include <openssl/ec.h> // for EC_KEY definition
-#include <openssl/obj_mac.h>
-
 class CBigNum;
+
+struct bignum_ctx;
+struct ec_key_st;
+struct ec_group_st;
+struct ec_point_st;
+typedef struct bignum_ctx BN_CTX;
+typedef struct ec_key_st EC_KEY;
+typedef struct ec_group_st EC_GROUP;
+typedef struct ec_point_st EC_POINT;
 
 // secp160k1
 // const unsigned int PRIVATE_KEY_SIZE = 192;
@@ -174,17 +180,7 @@ public:
     }
 
     //! fully validate whether this is a valid public key (more expensive than IsValid())
-    bool IsFullyValid() const
-    {
-        const unsigned char* pbegin = &vbytes[0];
-        EC_KEY *pkey = EC_KEY_new_by_curve_name(NID_secp256k1);
-        if (o2i_ECPublicKey(&pkey, &pbegin, size()))
-        {
-            EC_KEY_free(pkey);
-            return true;
-        }
-        return false;
-    }
+    bool IsFullyValid() const;
 
     //! Check whether this is a compressed public key.
     bool IsCompressed() const
@@ -279,7 +275,7 @@ public:
     // Calculate G*m + q
     bool ECMULGEN(const CBigNum &bnMultiplier, const CPoint &qPoint);
 
-    bool IsInfinity() { return EC_POINT_is_at_infinity(group, point) != 0; }
+    bool IsInfinity();
 };
 
 class CMalleablePubKey
