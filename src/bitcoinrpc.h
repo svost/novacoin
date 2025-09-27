@@ -6,8 +6,6 @@
 #ifndef _BITCOINRPC_H_
 #define _BITCOINRPC_H_ 1
 
-#include "checkpoints.h"
-
 #include "json/json_spirit_reader_template.h"
 #include "json/json_spirit_writer_template.h"
 #include "json/json_spirit_utils.h"
@@ -15,6 +13,9 @@
 #include <string>
 #include <list>
 #include <map>
+
+class CBlockIndex;
+class uint256;
 
 // HTTP status codes
 enum HTTPStatusCode
