@@ -8,6 +8,7 @@
 #include "bitcoinrpc.h"
 #include "db.h"
 #include "interface.h"
+#include "net.h"
 #include "random.h"
 #include "sync.h"
 #include "util.h"

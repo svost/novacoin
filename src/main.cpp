@@ -13,6 +13,7 @@
 #include "interface.h"
 #include "checkqueue.h"
 #include "kernel.h"
+#include "net.h"
 #include "random.h"
 #include "wallet.h"
 #include "scrypt.h"
@@ -287,6 +288,33 @@ bool CTransaction::ReadFromDisk(COutPoint prevout)
     CTxDB txdb("r");
     CTxIndex txindex;
     return ReadFromDisk(txdb, prevout, txindex);
+}
+
+void CTransaction::SetNull()
+{
+    nVersion = CTransaction::CURRENT_VERSION;
+    nTime = (uint32_t) GetAdjustedTime();
+    vin.clear();
+    vout.clear();
+    nLockTime = 0;
+    nDoS = 0;  // Denial-of-service prevention
+}
+
+bool CTransaction::IsFinal(int nBlockHeight, int64_t nBlockTime) const
+{
+    // Time based nLockTime implemented in 0.1.6
+    if (nLockTime == 0)
+        return true;
+    if (nBlockHeight == 0)
+        nBlockHeight = nBestHeight;
+    if (nBlockTime == 0)
+        nBlockTime = GetAdjustedTime();
+    if ((int64_t)nLockTime < ((int64_t)nLockTime < LOCKTIME_THRESHOLD ? (int64_t)nBlockHeight : nBlockTime))
+        return true;
+    for (const CTxIn& txin : vin)
+        if (!txin.IsFinal())
+            return false;
+    return true;
 }
 
 bool CTransaction::IsStandard(std::string& strReason) const
@@ -4028,3 +4056,21 @@ public:
         // orphan transactions
     }
 } instance_of_cmaincleanup;
+
+uint256 CDiskBlockIndex::GetBlockHash() const
+{
+    if (fUseFastIndex && (nTime < GetAdjustedTime() - nOneDay) && blockHash != 0)
+        return blockHash;
+
+    CBlock block;
+    block.nVersion        = nVersion;
+    block.hashPrevBlock   = hashPrev;
+    block.hashMerkleRoot  = hashMerkleRoot;
+    block.nTime           = nTime;
+    block.nBits           = nBits;
+    block.nNonce          = nNonce;
+
+    const_cast<CDiskBlockIndex*>(this)->blockHash = block.GetHash();
+
+    return blockHash;
+}

@@ -8,6 +8,7 @@
 #include "bignum.h"
 #include "kernel.h"
 #include "kernel_worker.h"
+#include "timedata.h"
 #include "txdb-leveldb.h"
 #include "main.h"
 

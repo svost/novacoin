@@ -8,7 +8,9 @@
 #include "bitcoinrpc.h"
 #include "init.h"
 #include "util.h"
+#include "net.h"
 #include "ntp.h"
+#include "timedata.h"
 #include "base58.h"
 
 using namespace json_spirit;

@@ -3,6 +3,7 @@
 #include "bitcoinunits.h"
 #include "main.h"
 #include "wallet.h"
+#include "timedata.h"
 #include "txdb-leveldb.h"
 #include "interface.h"
 #include "base58.h"

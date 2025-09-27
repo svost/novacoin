@@ -5,10 +5,13 @@
 #ifndef BITCOIN_MAIN_H
 #define BITCOIN_MAIN_H
 
-#include "timestamps.h"
-#include "sync.h"
-#include "net.h"
+#include "hash.h"
 #include "script.h"
+#include "serialize.h"
+#include "streams.h"
+#include "sync.h"
+#include "timestamps.h"
+#include "uint256.h"
 
 #include <algorithm>
 #include <limits>
@@ -456,15 +459,7 @@ public:
         READWRITE(nLockTime);
     )
 
-    void SetNull()
-    {
-        nVersion = CTransaction::CURRENT_VERSION;
-        nTime = (uint32_t) GetAdjustedTime();
-        vin.clear();
-        vout.clear();
-        nLockTime = 0;
-        nDoS = 0;  // Denial-of-service prevention
-    }
+    void SetNull();
 
     bool IsNull() const
     {
@@ -476,22 +471,7 @@ public:
         return SerializeHash(*this);
     }
 
-    bool IsFinal(int nBlockHeight=0, int64_t nBlockTime=0) const
-    {
-        // Time based nLockTime implemented in 0.1.6
-        if (nLockTime == 0)
-            return true;
-        if (nBlockHeight == 0)
-            nBlockHeight = nBestHeight;
-        if (nBlockTime == 0)
-            nBlockTime = GetAdjustedTime();
-        if ((int64_t)nLockTime < ((int64_t)nLockTime < LOCKTIME_THRESHOLD ? (int64_t)nBlockHeight : nBlockTime))
-            return true;
-        for (const CTxIn& txin : vin)
-            if (!txin.IsFinal())
-                return false;
-        return true;
-    }
+    bool IsFinal(int nBlockHeight=0, int64_t nBlockTime=0) const;
 
     bool IsNewerThan(const CTransaction& old) const
     {
@@ -1431,23 +1411,7 @@ public:
         READWRITE(blockHash);
     )
 
-    uint256 GetBlockHash() const
-    {
-        if (fUseFastIndex && (nTime < GetAdjustedTime() - nOneDay) && blockHash != 0)
-            return blockHash;
-
-        CBlock block;
-        block.nVersion        = nVersion;
-        block.hashPrevBlock   = hashPrev;
-        block.hashMerkleRoot  = hashMerkleRoot;
-        block.nTime           = nTime;
-        block.nBits           = nBits;
-        block.nNonce          = nNonce;
-
-        const_cast<CDiskBlockIndex*>(this)->blockHash = block.GetHash();
-
-        return blockHash;
-    }
+    uint256 GetBlockHash() const;
 
     std::string ToString() const
     {

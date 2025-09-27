@@ -12,6 +12,7 @@
 #include "multisigaddressentry.h"
 #include "multisiginputentry.h"
 #include "multisigdialog.h"
+#include "net.h"
 #include "ui_multisigdialog.h"
 #include "script.h"
 #include "sendcoinsentry.h"

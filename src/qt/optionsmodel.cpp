@@ -5,6 +5,7 @@
 #include "init.h"
 #include "walletdb.h"
 #include "guiutil.h"
+#include "net.h"
 #include "wallet.h"
 
 OptionsModel::OptionsModel(QObject *parent) :

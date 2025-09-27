@@ -8,6 +8,7 @@
 #include "kernel.h"
 #include "checkpoints.h"
 #include "main.h"
+#include "net.h"
 
 #include <boost/version.hpp>
 #include <boost/filesystem.hpp>

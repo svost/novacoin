@@ -2,6 +2,7 @@
 
 #include "wallet.h"
 #include "base58.h"
+#include "timedata.h"
 
 extern CWallet* pwalletMain;
 

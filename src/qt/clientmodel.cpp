@@ -6,6 +6,7 @@
 
 #include "alert.h"
 #include "main.h"
+#include "net.h"
 #include "interface.h"
 
 #include <QDateTime>

@@ -5,6 +5,7 @@
 #include "checkpoints.h"
 #include "key.h"
 #include "main.h"
+#include "net.h"
 #include "txdb-leveldb.h"
 
 

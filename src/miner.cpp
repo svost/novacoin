@@ -9,6 +9,8 @@
 #include "miner.h"
 #include "kernel.h"
 #include "kernel_worker.h"
+#include "net.h"
+#include "timedata.h"
 #include "wallet.h"
 
 

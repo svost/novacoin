@@ -9,6 +9,8 @@
 #include "init.h"
 #include "miner.h"
 #include "kernel.h"
+#include "net.h"
+#include "timedata.h"
 #include "bitcoinrpc.h"
 #include "wallet.h"
 
