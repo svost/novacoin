@@ -4,7 +4,6 @@
 #ifndef BITCOIN_CHECKPOINT_H
 #define  BITCOIN_CHECKPOINT_H
 
-#include "util.h"
 #include "serialize.h"
 #include "sync.h"
 #include "timeconsts.h"
@@ -94,16 +93,7 @@ public:
         hashCheckpoint = 0;
     }
 
-    std::string ToString() const
-    {
-        return strprintf(
-                "CSyncCheckpoint(\n"
-                "    nVersion       = %d\n"
-                "    hashCheckpoint = %s\n"
-                ")\n",
-            nVersion,
-            hashCheckpoint.ToString().c_str());
-    }
+    std::string ToString() const;
 };
 
 class CSyncCheckpoint : public CUnsignedSyncCheckpoint

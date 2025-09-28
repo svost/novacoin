@@ -7,6 +7,7 @@
 #include "main.h"
 #include "net.h"
 #include "txdb-leveldb.h"
+#include "util.h"
 
 
 namespace Checkpoints
@@ -374,6 +375,17 @@ namespace Checkpoints
         return (nBestHeight >= pindexSync->nHeight + nCoinbaseMaturity ||
                 pindexSync->GetBlockTime() + nStakeMinAge < GetAdjustedTime());
     }
+}
+
+std::string CUnsignedSyncCheckpoint::ToString() const
+{
+    return strprintf(
+            "CSyncCheckpoint(\n"
+            "    nVersion       = %d\n"
+            "    hashCheckpoint = %s\n"
+            ")\n",
+        nVersion,
+        hashCheckpoint.ToString().c_str());
 }
 
 // ppcoin: sync-checkpoint master key
