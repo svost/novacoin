@@ -7,6 +7,7 @@
 #include "util.h"
 #include "serialize.h"
 #include "sync.h"
+#include "timeconsts.h"
 #include "uint256.h"
 
 #include <map>

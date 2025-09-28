@@ -6,6 +6,7 @@
 #include "hash.h"
 #include "random.h"
 #include "streams.h"
+#include "timeconsts.h"
 
 using namespace std;
 

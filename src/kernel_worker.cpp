@@ -3,6 +3,7 @@
 #include "uint256.h"
 #include "kernel.h"
 #include "kernel_worker.h"
+#include "timeconsts.h"
 #include "util.h"
 
 #include <openssl/sha.h>

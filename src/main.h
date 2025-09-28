@@ -10,6 +10,7 @@
 #include "serialize.h"
 #include "streams.h"
 #include "sync.h"
+#include "timeconsts.h"
 #include "timestamps.h"
 #include "uint256.h"
 

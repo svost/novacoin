@@ -11,6 +11,7 @@
 
 #include "netbase.h"
 #include "net.h"
+#include "timeconsts.h"
 #include "interface.h"
 
 extern int GetRandInt(int nMax);
