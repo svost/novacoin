@@ -14,12 +14,6 @@
 // max 1 hour before latest block
 static const int64_t CHECKPOINT_MAX_SPAN = nOneHour;
 
-#ifdef WIN32
-#undef STRICT
-#undef PERMISSIVE
-#undef ADVISORY
-#endif
-
 class CBlockIndex;
 class CSyncCheckpoint;
 class CNode;
@@ -33,11 +27,11 @@ namespace Checkpoints
     enum CPMode
     {
         // Scrict checkpoints policy, perform conflicts verification and resolve conflicts
-        STRICT = 0,
+        CP_STRICT = 0,
         // Advisory checkpoints policy, perform conflicts verification but don't try to resolve them
-        ADVISORY = 1,
+        CP_ADVISORY = 1,
         // Permissive checkpoints policy, don't perform any checking
-        PERMISSIVE = 2
+        CP_PERMISSIVE = 2
     };
 
     // Returns true if block passes checkpoint checks
